@@ -1,0 +1,10 @@
+Site ID,Location description,Borough,Functional area for monitoring,Road type,Is it on the strategic CIO panel?,Old site ID (legacy),Easting (UK Grid),Northing (UK Grid),Latitude,Longitude
+ML0001,Millbank (south of Thorney Street),Westminster,01 Central,01 A Road,1,CENCY001,530251.49,178742.45,51.492628,-0.12520362
+ML0002,Bishopsgate,City of London,01 Central,01 A Road,2,CENCY002,533362.68,181824.45,51.519599,-0.07925389
+ML0003,Southwark Bridge,Southwark,01 Central,01 A Road,3,CENCY003,532334.06,180520.37,51.508123,-0.094550618
+ML0004,Southwark Bridge Road,Southwark,01 Central,01 A Road,4,CENCY004,532052.5,179677.64,51.500613,-0.098926959
+ML0005,Tooley Street,Southwark,01 Central,01 A Road,5,CENCY005,533031.59,180213.46,51.5052,-0.084629047
+ML0006,Southwark Bridge Road (north - between Flat Iron Square and America Street),Southwark,01 Central,01 A Road,6,CENCY006,532263.5,180067.71,51.504068,-0.095742803
+ML0007,Albert Embankment (south of Salamanca Street),Lambeth,01 Central,01 A Road,7,CENCY007,530467.76,178622.08,51.4915,-0.12213838
+ML0008,Strand,Westminster,01 Central,01 A Road,8,CENCY008,530347.31,180653.54,51.509779,-0.12311615
+ML0009,Charing Cross Road,Westminster,01 Central,01 A Road,9,CENCY009,529990.4,180677.24,51.510077,-0.12824866

@@ -1,15 +1,20 @@
 {
   "name": "final-year-project",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "vite generated",
+    "data": "cd data && nodemon host-db.js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "type": "module",
   "dependencies": {
-    "sqlite3": "^5.1.7"
+    "csv": "^6.3.11",
+    "express": "^4.21.1",
+    "ol": "^10.2.1",
+    "sqlite3": "^5.1.7",
+    "vite": "^5.4.10"
   }
 }
