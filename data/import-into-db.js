@@ -66,35 +66,50 @@ async function import_usage_stats() {
 
     console.log("[usage_stats] Processing " + usage_stats_files.length + " files");
 
-    const insert_stmt = `INSERT INTO usage_stats ( RentalID, Duration, BikeID, StartDate, StartStationID, StartStation, EndDate, EndStationID, EndStation ) VALUES `;
+    const insert_stmt = db.prepare(
+           `INSERT INTO usage_stats` 
+        + ` ( RentalID, Duration, BikeID, StartDate, StartStationID, StartStation, EndDate, EndStationID, EndStation )` 
+        + ` VALUES`
+        + ` (    ?    ,    ?    ,   ?   ,    ?     ,       ?       ,      ?      ,    ?   ,      ?      ,     ?      )`
+    );
+
+    // passing in the variables here keeps reference to them in the insert_stmt.run line
+    // because theres a reference held, they dont get garbage collected and balloon in size
+    // const sql_err_handler = (null_or_err, insert_record_stmt, record, file) => { if (null_or_err) throw {err: null_or_err, insert_record_stmt, record, file}; };
 
     let failed = 0;
     let completed = 0;
-    const sql_imports = usage_stats_files.map(async (file) => {
+    let total_records = 0;
+    process.stdout.write(`[usage_stats] ${completed}/${usage_stats_files.length} completed`);
+    const requests = usage_stats_files.map(async file => {
         try {
             const parser = fs_sync.createReadStream(file)
                              .pipe(parse({ 
                                  skip_records_with_error: true,
                                  columns: true,
                              }));
-            for await (const r of parser) {
-                const insert_record_stmt = insert_stmt 
-                    + `("${r["Rental Id"]}", "${r["Duration"]}", "${r["Bike Id"]}", "${r["Start Date"]}", "${r["StartStation Id"]}", "${r["StartStation Name"]}", "${r["End Date"]}", "${r["EndStation Id"]}", "${r["EndStation Name"]}");`;
-                db.exec(insert_record_stmt, (null_or_err) => { if (null_or_err) throw {err: null_or_err, insert_record_stmt, record: r, file}; });
+            const records = [];
+            for await (let r of parser) {
+                total_records++;
+                records.push([r["Rental Id"], r["Duration"], r["Bike Id"], r["Start Date"], r["StartStation Id"], r["StartStation Name"], r["End Date"], r["EndStation Id"], r["EndStation Name"]]);
             }
             parser.end();
 
-            console.log(`[usage_stats] ${++completed}/${usage_stats_files.length} completed`);
+            // TODO batch records
+
+            process.stdout.write(`\r[usage_stats] ${++completed}/${usage_stats_files.length} completed`);
         } catch (e) {
             failed++;
             console.error("[usage-stats] Failed to read file \"" + file + "\"", e)
         }
     });
 
-    await Promise.all(sql_imports);
+    await Promise.all(requests);
+
+    process.stdout.write("\r");
 
     if (failed > 0) console.warn("[usage-stats] Failed to process " + failed + " files");
-    console.log(`[usage_stats] Finished: ${completed}/${usage_stats_files.length} completed`);
+    console.log(`[usage_stats] Finished: ${completed}/${usage_stats_files.length} completed (total records: ${total_records})`);
 }
 
 function import_all() {
@@ -102,11 +117,7 @@ function import_all() {
     // import_counters();
     // import_cyle_routes();
     // import_cycling_infrastructure();
-    import_usage_stats().then(() => {
-        console.log("[import_all]: closing db");
-        db.close();
-        console.log("[import_all]: closed db");
-    });
+    import_usage_stats();
 
 }
 
