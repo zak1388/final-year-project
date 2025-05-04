@@ -366,7 +366,7 @@ class FlowButton {
         this.time_slider_element = document.createElement("input");
         this.time_slider_element.min = 0;
         this.time_slider_element.type = "range";
-        this.time_slider_element.max = 24 * 60 * 60;
+        this.time_slider_element.max = 24 * 60 * 60 - TIME_DELTA;
         this.time_slider_element.step = TIME_DELTA;
         this.time_slider_element.addEventListener("input", (e) => onTimeChange(e, this));
 
