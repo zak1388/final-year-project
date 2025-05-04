@@ -4,15 +4,15 @@ import sqlite3 from "sqlite3";
 const app = express();
 const port = 5718;
 
-const db = new sqlite3.Database("cycle-data.db");
+const db = new sqlite3.Database("cycle-data.db", 
+    sqlite3.OPEN_READONLY | sqlite3.OPEN_FULLMUTEX
+);
 
 app.get("/cycle_parking", (_req, res) => {
     db.all("SELECT * FROM cycle_parking;", [], (err, db_res) => {
         if (err) {
-            res.status(500).send();
-            return;
+            return res.status(500).send();
         }
-
         res.send(db_res);
     });
 });
@@ -47,6 +47,32 @@ app.get("/bike_point", (req, res) => {
 app.get("/usage_stats", (req, res) => {
     let where_clause = req.query.where? " WHERE " + req.query.where + " " : " "
     let query = `SELECT * FROM usage_stats${where_clause}LIMIT 1000;`;
+    db.all(query, (err, db_res) => {
+        if (err) res.status(500).send({message: "Database error", status: 400, database_error: err, query});
+        else res.send(db_res); 
+    });
+});
+
+app.get("/connection_stats/out", (req, res) => {
+    let query = "SELECT StationID, CountOut, TimeStart from connection_stats_out";
+
+    if (req.query.time) query += " WHERE TimeStart = " + req.query.time
+
+    query += ";"
+
+    db.all(query, (err, db_res) => {
+        if (err) res.status(500).send({message: "Database error", status: 400, database_error: err, query});
+        else res.send(db_res); 
+    });
+});
+
+app.get("/connection_stats/in", (req, res) => {
+    let query = "SELECT StationID, CountIn, TimeEnd from connection_stats_in;";
+
+    if (req.query.time) query += " WHERE TimeEnd = " + req.query.time
+
+    query += ";"
+
     db.all(query, (err, db_res) => {
         if (err) res.status(500).send({message: "Database error", status: 400, database_error: err, query});
         else res.send(db_res); 
